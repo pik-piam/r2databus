@@ -31,7 +31,7 @@ as.jsonldGroup <- function(context, x) {
 
 }
 
-as.jsonldData <- function(context, x) {
+as.jsonldDataID <- function(context, x) {
 
     group_uri = getTargetURIDataID(x)
 
@@ -43,11 +43,27 @@ as.jsonldData <- function(context, x) {
             "@type" = "dataid:Group",
             "label" = list("@value" = x["label"], "@language" = "en"),
             "title" = list("@value" = x["title"], "@language" = "en"),
-            "comment" = list("@value" = x["comment"], "@language" = "en")
+            "comment" = list("@value" = x["comment"], "@language" = "en"),
             "abstract" = list("@value" = x["abstract"], "@language" = "en"),
             "description" = list("@value" = x["description"], "@language" = "en")
         )
     )
+
+    distinct_cvs <- function(self) {
+
+        distinct_cv_definitions = list()
+        for dbfile in self.databus_files:
+            for key, value in dbfile.cvs.items():
+
+            if not key in distinct_cv_definitions:
+            distinct_cv_definitions[key] = {
+                "@type": "rdf:Property",
+                "@id": f"dataid-cv:{key}",
+                "rdfs:subPropertyOf": {"@id": "dataid:contentVariant"},
+            }
+            return(distinct_cv_definitions)
+    }
+
     return(jsonlite::toJSON(group_data_dict))
 
 }
@@ -62,19 +78,19 @@ getTargetURIDataID <- function(x) {
 
 
 
-DatabusFile <- function(uri, cvs, file_ext) {
+databusFile <- function(x) {
     #Fetches the necessary information of a file URI for the deployment to the databus.
 
-    resp <- GET(uri)
+    resp <- GET(x[["file"]])
     if (resp["status_code"] > 400)
         print("ERROR for {uri} -> Status {str(resp.status_code)}")
 
     sha256sum <- digest::digest(resp["content"], algo = "sha256")
     content_length <- length(resp[["content"]])
-    file_ext <- file_ext
+    file_ext <- x[["filetype"]]
 #    id_string = "_".join([f"{k}={v}" for k, v in cvs.items()]) + "." + file_ext
-    id_string = paste0("_", names(cvs)[1], "=", cvs[[1]], ".", file_ext)
-    return(list())
+    id_string = paste0("_", names(x["metadata"])[1], "=", x["metadata"][[1]], ".", file_ext)
+    return(list(sha256sum = sha256sum, sha256sum = sha256sum, file_ext = file_ext, id_string = id_string))
 }
 
 
@@ -92,7 +108,7 @@ class DataVersion:
     abstract: str
     description: str
     license: str
-    databus_files: List[DatabusFile]
+    databus_files: List[databusFile]
     issued: datetime = field(default_factory=datetime.now)
     context: str = "https://raw.githubusercontent.com/dbpedia/databus-git-mockup/main/dev/context.jsonld"
 
@@ -238,33 +254,33 @@ license <- "http://this.is.a.license.uri.com/test"
 files <- list(
     "file"=
         "https://yum-yab.github.io/data/databus-api-test/first/Sample500.csv",
-        "metadata"=c("type","randomData"), "filetype"=
+        "metadata"=list("type" = "randomData"), "filetype"=
         "csv"
 )
 
-databus_version = DataVersion(
-    account_name=account_name,
-    group=group,
-    artifact=artifact,
-    version=version,
-    title=title,
-    publisher=publisher,
-    label=label,
-    comment=comment,
-    abstract=abstract,
-    description=description,
-    license=license,
-    databus_files=files,
+databus_version = list(
+    account_name = account_name,
+    group = group,
+    artifact = artifact,
+    version = version,
+    title = title,
+    publisher = publisher,
+    label = label,
+    comment = comment,
+    abstract = abstract,
+    description = description,
+    license = license,
+    databus_files = files
 )
 
 databus_group = list(
-    account_name=account_name,
-    id=group,
-    label="Test Group",
-    title="Test Group",
-    abstract="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
-    comment="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
-    description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+    account_name = account_name,
+    id = group,
+    label = "Test Group",
+    title = "Test Group",
+    abstract = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+    comment = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+    description = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
 )
 
 # For the new version deployed to dev.databus.dbpedia.org
