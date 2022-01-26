@@ -40,7 +40,7 @@ as.jsonldDataID <- function(context, x) {
         "@graph"= list(
 
             "@id" = x["id"],
-            "@type" = "dataid:Group",
+            "@type" = "dataid:Dataset",
             "label" = list("@value" = x["label"], "@language" = "en"),
             "title" = list("@value" = x["title"], "@language" = "en"),
             "comment" = list("@value" = x["comment"], "@language" = "en"),
@@ -49,18 +49,20 @@ as.jsonldDataID <- function(context, x) {
         )
     )
 
-    distinct_cvs <- function(self) {
+    distinct_cvs <- function(x) {
 
         distinct_cv_definitions = list()
-        for dbfile in self.databus_files:
+        for (dbfile in x) {
             for key, value in dbfile.cvs.items():
 
-            if not key in distinct_cv_definitions:
-            distinct_cv_definitions[key] = {
-                "@type": "rdf:Property",
-                "@id": f"dataid-cv:{key}",
-                "rdfs:subPropertyOf": {"@id": "dataid:contentVariant"},
-            }
+                if not key in distinct_cv_definitions:
+                distinct_cv_definitions[key] = {
+                    "@type": "rdf:Property",
+                    "@id": f"dataid-cv:{key}",
+                    "rdfs:subPropertyOf": {"@id": "dataid:contentVariant"},
+                }
+        }
+
             return(distinct_cv_definitions)
     }
 
