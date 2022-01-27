@@ -18,7 +18,7 @@ as.jsonldGroup <- function(context, x) {
         "@context" = context,
         "@graph"= list(
 
-                "@id" = x["id"],
+                "@id" = group_uri,
                 "@type" = "dataid:Group",
                 "label" = list("@value" = x["label"], "@language" = "en"),
                 "title" = list("@value" = x["title"], "@language" = "en"),
@@ -33,14 +33,19 @@ as.jsonldGroup <- function(context, x) {
 
 as.jsonldDataID <- function(context, x) {
 
-    group_uri = getTargetURIDataID(x)
+    dataid_uri = getTargetURIDataID(x)
 
     group_data_dict = list(
         "@context" = context,
         "@graph"= list(
-
-            "@id" = x["id"],
+            "@id" = paste0(dataid_uri, "#Dataset"),
             "@type" = "dataid:Dataset",
+            "version" = dataid_uri,
+            "artifact" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"])
+            "group" = getTargetURIGroup(x),
+            "hasVersion" = x[["version"]],
+            "issued", = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
+            "publisher" = x[["publisher"]],
             "label" = list("@value" = x["label"], "@language" = "en"),
             "title" = list("@value" = x["title"], "@language" = "en"),
             "comment" = list("@value" = x["comment"], "@language" = "en"),
@@ -71,7 +76,7 @@ as.jsonldDataID <- function(context, x) {
 }
 
 getTargetURIGroup <- function(x) {
-    return(paste0(DATABUS_URI_BASE , "/", x["account_name"], "/", x["id"], "/"))
+    return(paste0(DATABUS_URI_BASE , "/", x["account_name"], "/", x["group"], "/"))
 }
 
 getTargetURIDataID <- function(x) {
