@@ -22,7 +22,7 @@ as.jsonldGroup <- function(context, x) {
                 "@type" = "dataid:Group",
                 "label" = list("@value" = x["label"], "@language" = "en"),
                 "title" = list("@value" = x["title"], "@language" = "en"),
-                "comment" = list("@value" = x["comment"], "@language" = "en")
+                "comment" = list("@value" = x["comment"], "@language" = "en"),
                 "abstract" = list("@value" = x["abstract"], "@language" = "en"),
                 "description" = list("@value" = x["description"], "@language" = "en")
         )
@@ -41,35 +41,37 @@ as.jsonldDataID <- function(context, x) {
             "@id" = paste0(dataid_uri, "#Dataset"),
             "@type" = "dataid:Dataset",
             "version" = dataid_uri,
-            "artifact" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"])
+            "artifact" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]),
             "group" = getTargetURIGroup(x),
             "hasVersion" = x[["version"]],
-            "issued", = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
+            "issued" = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
             "publisher" = x[["publisher"]],
             "label" = list("@value" = x["label"], "@language" = "en"),
             "title" = list("@value" = x["title"], "@language" = "en"),
             "comment" = list("@value" = x["comment"], "@language" = "en"),
             "abstract" = list("@value" = x["abstract"], "@language" = "en"),
-            "description" = list("@value" = x["description"], "@language" = "en")
+            "description" = list("@value" = x["description"], "@language" = "en"),
+            "license" = list("@id" = x["license"]),
+            "distribution" = dbfiles_to_dict(x[["databus_files"]], dataid_uri)
         )
     )
 
-    distinct_cvs <- function(x) {
+#    distinct_cvs <- function(x) {
 
-        distinct_cv_definitions = list()
-        for (dbfile in x) {
-            for key, value in dbfile.cvs.items():
+#        distinct_cv_definitions = list()
+#        for (dbfile in x) {
+#            for key, value in dbfile.cvs.items():
 
-                if not key in distinct_cv_definitions:
-                distinct_cv_definitions[key] = {
-                    "@type": "rdf:Property",
-                    "@id": f"dataid-cv:{key}",
-                    "rdfs:subPropertyOf": {"@id": "dataid:contentVariant"},
-                }
-        }
+#                if not key in distinct_cv_definitions:
+#                distinct_cv_definitions[key] = {
+#                    "@type": "rdf:Property",
+#                    "@id": f"dataid-cv:{key}",
+#                    "rdfs:subPropertyOf": {"@id": "dataid:contentVariant"},
+#                }
+#        }
 
-            return(distinct_cv_definitions)
-    }
+#            return(distinct_cv_definitions)
+#    }
 
     return(jsonlite::toJSON(group_data_dict))
 
@@ -137,25 +139,30 @@ class DataVersion:
                     }
         return distinct_cv_definitions
 
-    def __dbfiles_to_dict(self):
+    dbfiles_to_dict <- function(x, dataid_uri) {
+        file_dst <- list()
+        for (dbfile in names(x)) {
+            file_dst[[dbfile]] = list(
+                "@id" = paste0(dataid_uri, "#", databusFile(dbfile)[["id_string"]])
+#                "file": self.version_uri + "/" + self.artifact + "_" + dbfile.id_string,
+#                "@type": "dataid:SingleFile",
+#                "formatExtension": dbfile.file_ext,
+#                "compression": "none",
+#                "downloadURL": dbfile.uri,
+#                "byteSize": dbfile.content_length,
+#                "sha256sum": dbfile.sha256sum,
+#                "hasVersion": self.version,
+            )
+        }
 
-        for dbfile in self.databus_files:
-            file_dst = {
-                "@id": self.version_uri + "#" + dbfile.id_string,
-                "file": self.version_uri + "/" + self.artifact + "_" + dbfile.id_string,
-                "@type": "dataid:SingleFile",
-                "formatExtension": dbfile.file_ext,
-                "compression": "none",
-                "downloadURL": dbfile.uri,
-                "byteSize": dbfile.content_length,
-                "sha256sum": dbfile.sha256sum,
-                "hasVersion": self.version,
-            }
-            for key, value in dbfile.cvs.items():
+#            for key, value in dbfile.cvs.items():
 
-                file_dst[f"dataid-cv:{key}"] = value
+#                file_dst[f"dataid-cv:{key}"] = value
 
-            yield file_dst
+#                yield file_dst
+    }
+
+
 
     def to_jsonld(self, **kwargs) -> str:
         self.version_uri = (
@@ -259,10 +266,10 @@ description <- "A bit longer description of the dataset."
 license <- "http://this.is.a.license.uri.com/test"
 
 files <- list(
-    "file"=
+    list("file"=
         "https://yum-yab.github.io/data/databus-api-test/first/Sample500.csv",
         "metadata"=list("type" = "randomData"), "filetype"=
-        "csv"
+        "csv")
 )
 
 databus_version = list(
