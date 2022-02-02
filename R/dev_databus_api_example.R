@@ -141,8 +141,10 @@ class DataVersion:
 
     dbfiles_to_dict <- function(x, dataid_uri) {
         file_dst <- list()
-        for (dbfile in names(x)) {
-            file_dst[[dbfile]] = list(
+        i <- 0
+        for (dbfile in x) {
+            i <- i + 1
+            file_dst[[i]] = list(
                 "@id" = paste0(dataid_uri, "#", databusFile(dbfile)[["id_string"]])
 #                "file": self.version_uri + "/" + self.artifact + "_" + dbfile.id_string,
 #                "@type": "dataid:SingleFile",
@@ -160,6 +162,7 @@ class DataVersion:
 #                file_dst[f"dataid-cv:{key}"] = value
 
 #                yield file_dst
+        return(file_dst)
     }
 
 
