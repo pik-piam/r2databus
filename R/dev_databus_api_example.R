@@ -7,7 +7,7 @@
 #from typing import List
 
 DATABUS_URI_BASE = "https://dev.databus.dbpedia.org"
-
+post_databus_uri = "https://dev.databus.dbpedia.org/system/publish"
 
 
 as.jsonldGroup <- function(context, x) {
@@ -33,26 +33,48 @@ as.jsonldGroup <- function(context, x) {
 
 as.jsonldDataID <- function(context, x) {
 
+    distinct_cvs <- function(x) {
+        distinct_cv_definitions <- list()
+        i <- 0
+        for (dbfile in x) {
+            for (item in dbfile["metadata"]) {
+                i <- i + 1
+                distinct_cv_definitions[[i]] <- list(
+                    "@type" = "rdf:Property",
+                    "@id" = names(item),
+                    "rdfs:subPropertyOf" = '{"@id": "dataid:contentVariant"}'
+                )
+            }
+
+        }
+        return(unique(distinct_cv_definitions))
+    }
+
     dataid_uri = getTargetURIDataID(x)
 
     group_data_dict = list(
         "@context" = context,
         "@graph"= list(
-            "@id" = paste0(dataid_uri, "#Dataset"),
-            "@type" = "dataid:Dataset",
-            "version" = dataid_uri,
-            "artifact" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]),
-            "group" = getTargetURIGroup(x),
-            "hasVersion" = x[["version"]],
-            "issued" = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
-            "publisher" = x[["publisher"]],
-            "label" = list("@value" = x["label"], "@language" = "en"),
-            "title" = list("@value" = x["title"], "@language" = "en"),
-            "comment" = list("@value" = x["comment"], "@language" = "en"),
-            "abstract" = list("@value" = x["abstract"], "@language" = "en"),
-            "description" = list("@value" = x["description"], "@language" = "en"),
-            "license" = list("@id" = x["license"]),
-            "distribution" = dbfiles_to_dict(x[["databus_files"]], dataid_uri)
+            list(
+                "@id" = paste0(dataid_uri, "#Dataset"),
+                "@type" = "dataid:Dataset",
+                "version" = dataid_uri,
+                "artifact" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]),
+                "group" = getTargetURIGroup(x),
+                "hasVersion" = x[["version"]],
+                "issued" = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
+                "publisher" = x[["publisher"]],
+                "label" = list("@value" = x["label"], "@language" = "en"),
+                "title" = list("@value" = x["title"], "@language" = "en"),
+                "comment" = list("@value" = x["comment"], "@language" = "en"),
+                "abstract" = list("@value" = x["abstract"], "@language" = "en"),
+                "description" = list("@value" = x["description"], "@language" = "en"),
+                "license" = list("@id" = x["license"]),
+                "distribution" = dbfiles_to_dict(x[["databus_files"]], x[["artifact"]], dataid_uri)
+            ),
+            distinct_cvs(x[["databus_files"]]),
+            list("@id" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]), "@type" = "dataid:Artifact"),
+            list("@id" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"], "/", x["version"]), "@type" = "dataid:Version")
         )
     )
 
@@ -78,7 +100,7 @@ as.jsonldDataID <- function(context, x) {
 }
 
 getTargetURIGroup <- function(x) {
-    return(paste0(DATABUS_URI_BASE , "/", x["account_name"], "/", x["group"], "/"))
+    return(paste0(DATABUS_URI_BASE , "/", x["account_name"], "/", x["id"]))
 }
 
 getTargetURIDataID <- function(x) {
@@ -99,132 +121,45 @@ databusFile <- function(x) {
     file_ext <- x[["filetype"]]
 #    id_string = "_".join([f"{k}={v}" for k, v in cvs.items()]) + "." + file_ext
     id_string = paste0("_", names(x["metadata"])[1], "=", x["metadata"][[1]], ".", file_ext)
-    return(list(sha256sum = sha256sum, sha256sum = sha256sum, file_ext = file_ext, id_string = id_string))
+    return(list(sha256sum = sha256sum, content_length = content_length, sha256sum = sha256sum, file_ext = file_ext, id_string = id_string))
 }
 
 
 
-@dataclass
-class DataVersion:
-    account_name: str
-    group: str
-    artifact: str
-    version: str
-    title: str
-    label: str
-    publisher: str
-    comment: str
-    abstract: str
-    description: str
-    license: str
-    databus_files: List[databusFile]
-    issued: datetime = field(default_factory=datetime.now)
-    context: str = "https://raw.githubusercontent.com/dbpedia/databus-git-mockup/main/dev/context.jsonld"
-
-    def get_target_uri(self):
-
-        return f"https://dev.databus.dbpedia.org/{self.account_name}/{self.group}/{self.artifact}/{self.version}"
-
-    def __distinct_cvs(self) -> dict:
-
-        distinct_cv_definitions = {}
-        for dbfile in self.databus_files:
-            for key, value in dbfile.cvs.items():
-
-                if not key in distinct_cv_definitions:
-                    distinct_cv_definitions[key] = {
-                        "@type": "rdf:Property",
-                        "@id": f"dataid-cv:{key}",
-                        "rdfs:subPropertyOf": {"@id": "dataid:contentVariant"},
-                    }
-        return distinct_cv_definitions
-
-    dbfiles_to_dict <- function(x, dataid_uri) {
-        file_dst <- list()
-        i <- 0
-        for (dbfile in x) {
-            i <- i + 1
-            file_dst[[i]] = list(
-                "@id" = paste0(dataid_uri, "#", databusFile(dbfile)[["id_string"]])
-#                "file": self.version_uri + "/" + self.artifact + "_" + dbfile.id_string,
-#                "@type": "dataid:SingleFile",
-#                "formatExtension": dbfile.file_ext,
-#                "compression": "none",
-#                "downloadURL": dbfile.uri,
-#                "byteSize": dbfile.content_length,
-#                "sha256sum": dbfile.sha256sum,
-#                "hasVersion": self.version,
-            )
-        }
-
-#            for key, value in dbfile.cvs.items():
-
-#                file_dst[f"dataid-cv:{key}"] = value
-
-#                yield file_dst
-        return(file_dst)
+dbfiles_to_dict <- function(x, artifact, dataid_uri) {
+    file_dst <- list()
+    i <- 0
+    for (dbfile in x) {
+        i <- i + 1
+        file_dst[[i]] = list(
+            "@id" = paste0(dataid_uri, "#", databusFile(dbfile)[["id_string"]]),
+            "file" = paste0(dataid_uri, "/", artifact, databusFile(dbfile)[["id_string"]]),
+            "@type" = "dataid:Part",
+            "format" = databusFile(dbfile)[["file_ext"]],
+            "compression" = "none",
+            "downloadURL" = dbfile[["file"]],
+            "byteSize" = databusFile(dbfile)[["content_length"]],
+            "sha256sum" = databusFile(dbfile)[["sha256sum"]]
+        )
+        for (kv in dbfile["metadata"]) file_dst[[i]][paste0("dcv:", names(kv))] = kv[[1]]
     }
 
+    return(file_dst)
+}
 
 
-    def to_jsonld(self, **kwargs) -> str:
-        self.version_uri = (
-            f"{DATABUS_URI_BASE}/{account_name}/{group}/{artifact}/{version}"
-        )
-        self.data_id_uri = self.version_uri + "#Dataset"
-
-        self.artifact_uri = (
-            f"{DATABUS_URI_BASE}/{account_name}/{group}/{artifact}"
-        )
-
-        self.group_uri = f"{DATABUS_URI_BASE}/{account_name}/{group}"
-
-        self.timestamp = self.issued.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-        data_id_dict = {
-            "@context": self.context,
-            "@graph": [
-                {
-                    "@type": "dataid:Dataset",
-                    "@id": self.data_id_uri,
-                    "version": self.version_uri,
-                    "artifact": self.artifact_uri,
-                    "group": self.group_uri,
-                    "hasVersion": self.version,
-                    "issued": self.timestamp,
-                    "publisher": self.publisher,
-                    "label": {"@value": self.label, "@language": "en"},
-                    "title": {"@value": self.title, "@language": "en"},
-                    "comment": {"@value": self.comment, "@language": "en"},
-                    "abstract": {"@value": self.abstract, "@language": "en"},
-                    "description": {"@value": self.description, "@language": "en"},
-                    "license": {"@id": self.license},
-                    "distribution": [d for d in self.__dbfiles_to_dict()],
-                }
-            ],
-        }
-
-        for _, named_cv_prop in self.__distinct_cvs().items():
-            data_id_dict["@graph"].append(named_cv_prop)
-
-        # add explicit artifact statement
-
-        data_id_dict["@graph"].append({"@id": self.get_target_uri().rsplit("/", 1)[0], "@type": "dataid:Artifact"})
-
-        # Explicit Version Statement
-        data_id_dict["@graph"].append({"@id": self.get_target_uri(), "@type": "dataid:Version"})
-
-
-        return json.dumps(data_id_dict)
-
-
-deploy_to_dev_databus <- function(context, api_key, group, dataid) {
+deploy_to_dev_databus <- function(api_key, group, dataid) {
 
         message(paste0("Deploying Group"))
         groupld = as.jsonldGroup(context, group)
+        resp <- POST(url = post_databus_uri,
+                     body = groupld,
+                     encode = "raw",
+                     headers = list("X-API-Key" = api_key, "Content-Type" = "application/json")
+                     )
 #        resp = PUT(getTargetURIGroup(group), headers='{"X-API-Key": api_key, "Content-Type": "application/json"}', data = groupld)
 #print(resp)
-system(paste0("curl -H 'x-api-key: ", api_key, "' -X PUT -H 'Content-Type: application/json' -d '", groupld,  "' ", getTargetURIGroup(group))) #https://dev.databus.dbpedia.org/giannoupik/general"))
+#system(paste0("curl -H 'x-api-key: ", api_key, "' -X PUT -H 'Content-Type: application/json' -d '", groupld,  "' ", post_databus_uri)) #https://dev.databus.dbpedia.org/giannoupik/general"))
 #            if (resp["status_code"] >= 400) {
 #            print(f"Response: Status {resp.status_code}; Text: {resp.text}")
 #            print(f"Problematic file:\n {submission_data}")
@@ -239,18 +174,18 @@ system(paste0("curl -H 'x-api-key: ", api_key, "' -X PUT -H 'Content-Type: appli
 #            print(f"Problematic file:\n {submission_data}")
 #        }
 
-
+return(resp)
 }
 
-context <- "https://raw.githubusercontent.com/dbpedia/databus-git-mockup/main/dev/context.jsonld"
+context <- "https://downloads.dbpedia.org/databus/context.jsonld"
 
-account_name <- "rsebot"
+account_name <- "giannoupik"
 
 group <- "general"
 
 artifact <- "testartifact"
 
-version <- "2022-01-25"
+version <- "2022-02-03"
 
 title <- "Test Title"
 
@@ -269,10 +204,9 @@ description <- "A bit longer description of the dataset."
 license <- "http://this.is.a.license.uri.com/test"
 
 files <- list(
-    list("file"=
-        "https://yum-yab.github.io/data/databus-api-test/first/Sample500.csv",
-        "metadata"=list("type" = "randomData"), "filetype"=
-        "csv")
+    list("file" = "https://yum-yab.github.io/data/databus-api-test/first/Sample500.csv",
+        "metadata" = list("type" = "randomData"),
+        "filetype" = "csv")
 )
 
 databus_version = list(
@@ -302,4 +236,4 @@ databus_group = list(
 
 # For the new version deployed to dev.databus.dbpedia.org
 # API KEY can be found or generated under https://dev.databus.dbpedia.org/{{user}}#settings
-deploy_to_dev_databus(account_name, "d11b8e3d-c1a4-4f88-be98-94831c3bbdf3", databus_group, databus_version)
+deploy_to_dev_databus("my-key", databus_group, databus_version)
