@@ -116,7 +116,9 @@ databusFile <- function(x) {
     content_length <- length(resp[["content"]])
     file_ext <- x[["filetype"]]
 #    id_string = "_".join([f"{k}={v}" for k, v in cvs.items()]) + "." + file_ext
-    id_string = paste0("_", names(x["metadata"])[1], "=", x["metadata"][[1]], ".", file_ext)
+    tmp <- NULL
+    for(i in x["metadata"]) tmp<-paste0(tmp,names(i),"=",i,collapse = "_")
+    id_string = paste0(tmp, ".", file_ext)
     return(list(sha256sum = sha256sum, content_length = content_length, sha256sum = sha256sum, file_ext = file_ext, id_string = id_string))
 }
 
@@ -129,12 +131,12 @@ dbfiles_to_dict <- function(x, artifact, dataid_uri) {
         i <- i + 1
         file_dst[[i]] = list(
             "@id" = paste0(dataid_uri, "#", databusFile(dbfile)[["id_string"]]),
-            "file" = paste0(dataid_uri, "/", artifact, databusFile(dbfile)[["id_string"]]),
+            "file" = paste0(dataid_uri, "/", artifact, "_", databusFile(dbfile)[["id_string"]]),
             "@type" = "dataid:Part",
             "format" = databusFile(dbfile)[["file_ext"]],
             "compression" = "none",
             "downloadURL" = dbfile[["file"]],
-            "byteSize" = databusFile(dbfile)[["content_length"]],
+            "byteSize" = as.character(databusFile(dbfile)[["content_length"]]),
             "sha256sum" = databusFile(dbfile)[["sha256sum"]]
         )
         for (kv in dbfile["metadata"]) file_dst[[i]][paste0("dcv:", names(kv))] = kv[[1]]
@@ -190,32 +192,38 @@ context <- "https://downloads.dbpedia.org/databus/context.jsonld"
 
 account_name <- "giannoupik"
 
-group <- "general2"
+group <- "general5R"
 
-artifact <- "testartifact2"
+artifact <- "testartifact5R"
 
-version <- "2022-02-08"
+version <- "2022-02-10"
 
-title <- "Test Title 2"
+title <- "Test Title 5R"
 
 
 # currently its advised to use the internal webid found at https://dev.databus.dbpedia.org/{{user}}#settings
 publisher <- paste0("https://dev.databus.dbpedia.org/", account_name, "#this")
 
-label <- "Test Label 2"
+label <- "Test Label 5R"
 
-comment <- "This is a short comment about the 2nd test."
+comment <- "This is a short comment about the 5R test."
 
-abstract <- "This a short abstract for the dataset 2. Since this is only a test it is quite insignificant."
+abstract <- "This a short abstract for the dataset 5R. Since this is only a test it is quite insignificant."
 
-description <- "A bit longer description of the dataset 2."
+description <- "A bit longer description of the dataset 5R."
 
 license <- "http://this.is.a.license.uri.com/test"
 
 files <- list(
+    list("file" = "https://yum-yab.github.io/data/databus-api-test/first/pizza-ont.owl",
+         "metadata" = list("type" = "ontology"),
+         "filetype" = "owl"),
     list("file" = "https://yum-yab.github.io/data/databus-api-test/first/Sample500.csv",
         "metadata" = list("type" = "randomData"),
-        "filetype" = "csv")
+        "filetype" = "csv"),
+    list("file" = "https://openenergy-platform.org/api/v0/schema/supply/tables/wind_turbine_library/rows/",
+         "metadata" = list("type" = "turbineData", "extra" = "external"),
+         "filetype" = "json")
 )
 
 databus_version = list(
@@ -237,8 +245,8 @@ databus_version = list(
 databus_group = list(
     account_name = account_name,
     id = group,
-    label = "Test Group 2",
-    title = "Test Group 2",
+    label = "Test Group 5R",
+    title = "Test Group 5R",
     abstract = "Lorem ipsum dolor sit amet.",
     comment = "Lorem ipsum dolor sit amet.",
     description = "Lorem ipsum dolor sit amet."
