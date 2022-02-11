@@ -33,12 +33,12 @@ as.jsonldDataID <- function(context, x) {
         distinct_cv_definitions <- list()
         i <- 0
         for (dbfile in x) {
-            for (item in dbfile["metadata"]) {
+            for (item in names(dbfile[["metadata"]])) {
                 i <- i + 1
                 distinct_cv_definitions[[i]] <- list(
                     "@type" = "rdf:Property",
-                    "@id" = names(item),
-                    "rdfs:subPropertyOf" = '{"@id": "dataid:contentVariant"}'
+                    "@id" = paste0('dcv:', item),
+                    "rdfs:subPropertyOf" = list('@id' = 'dataid:contentVariant')
                 )
             }
 
@@ -67,30 +67,12 @@ as.jsonldDataID <- function(context, x) {
                 "description" = list("@value" = x[["description"]], "@language" = "en"),
                 "license" = list("@id" = x[["license"]]),
                 "distribution" = dbfiles_to_dict(x[["databus_files"]], x[["artifact"]], dataid_uri)
-            ),
-            distinct_cvs(x[["databus_files"]]),
-            list("@id" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]), "@type" = "dataid:Artifact"),
-            list("@id" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"], "/", x["version"]), "@type" = "dataid:Version")
+            )
         )
     )
-
-#    distinct_cvs <- function(x) {
-
-#        distinct_cv_definitions = list()
-#        for (dbfile in x) {
-#            for key, value in dbfile.cvs.items():
-
-#                if not key in distinct_cv_definitions:
-#                distinct_cv_definitions[key] = {
-#                    "@type": "rdf:Property",
-#                    "@id": f"dataid-cv:{key}",
-#                    "rdfs:subPropertyOf": {"@id": "dataid:contentVariant"},
-#                }
-#        }
-
-#            return(distinct_cv_definitions)
-#    }
-
+    for (i in distinct_cvs(x[["databus_files"]])) group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(i))
+    group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(list("@id" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]), "@type" = "dataid:Artifact")))
+    group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(list("@id" = paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"], "/", x["version"]), "@type" = "dataid:Version")))
     return(jsonlite::toJSON(group_data_dict, auto_unbox = TRUE))
 
 }
@@ -139,7 +121,7 @@ dbfiles_to_dict <- function(x, artifact, dataid_uri) {
             "byteSize" = as.character(databusFile(dbfile)[["content_length"]]),
             "sha256sum" = databusFile(dbfile)[["sha256sum"]]
         )
-        for (kv in dbfile["metadata"]) file_dst[[i]][paste0("dcv:", names(kv))] = kv[[1]]
+        for (kv in dbfile["metadata"]) file_dst[[i]][paste0("dcv:", names(kv))] = kv
     }
 
     return(file_dst)
@@ -192,25 +174,25 @@ context <- "https://downloads.dbpedia.org/databus/context.jsonld"
 
 account_name <- "giannoupik"
 
-group <- "general5R"
+group <- "general7R"
 
-artifact <- "testartifact5R"
+artifact <- "testartifact7R"
 
-version <- "2022-02-10"
+version <- "2022-02-11"
 
-title <- "Test Title 5R"
+title <- "Test Title 7R"
 
 
 # currently its advised to use the internal webid found at https://dev.databus.dbpedia.org/{{user}}#settings
 publisher <- paste0("https://dev.databus.dbpedia.org/", account_name, "#this")
 
-label <- "Test Label 5R"
+label <- "Test Label 7R"
 
-comment <- "This is a short comment about the 5R test."
+comment <- "This is a short comment about the 7R test."
 
-abstract <- "This a short abstract for the dataset 5R. Since this is only a test it is quite insignificant."
+abstract <- "This a short abstract for the dataset 7R. Since this is only a test it is quite insignificant."
 
-description <- "A bit longer description of the dataset 5R."
+description <- "A bit longer description of the dataset 7R."
 
 license <- "http://this.is.a.license.uri.com/test"
 
@@ -245,8 +227,8 @@ databus_version = list(
 databus_group = list(
     account_name = account_name,
     id = group,
-    label = "Test Group 5R",
-    title = "Test Group 5R",
+    label = "Test Group 7R",
+    title = "Test Group 7R",
     abstract = "Lorem ipsum dolor sit amet.",
     comment = "Lorem ipsum dolor sit amet.",
     description = "Lorem ipsum dolor sit amet."
