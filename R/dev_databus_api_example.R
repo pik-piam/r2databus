@@ -77,34 +77,6 @@ as.jsonldDataID <- function(context, x) {
 
 }
 
-getTargetURIGroup <- function(x) {
-    return(paste0(DATABUS_URI_BASE , "/", x["account_name"], "/", x["id"]))
-}
-
-getTargetURIDataID <- function(x) {
-    return(paste0(DATABUS_URI_BASE , "/", x["account_name"] , "/", x["group"] , "/", x["artifact"] , "/", x["version"]))
-}
-
-
-
-databusFile <- function(x) {
-    #Fetches the necessary information of a file URI for the deployment to the databus.
-
-    resp <- GET(x[["file"]])
-    if (resp["status_code"] > 400)
-        print("ERROR for {uri} -> Status {str(resp.status_code)}")
-
-    sha256sum <- digest::digest(resp["content"], algo = "sha256")
-    content_length <- length(resp[["content"]])
-    file_ext <- x[["filetype"]]
-#    id_string = "_".join([f"{k}={v}" for k, v in cvs.items()]) + "." + file_ext
-    tmp <- NULL
-    for(i in x["metadata"]) tmp<-paste0(tmp,names(i),"=",i,collapse = "_")
-    id_string = paste0(tmp, ".", file_ext)
-    return(list(sha256sum = sha256sum, content_length = content_length, sha256sum = sha256sum, file_ext = file_ext, id_string = id_string))
-}
-
-
 
 dbfiles_to_dict <- function(x, artifact, dataid_uri) {
     file_dst <- list()
@@ -112,14 +84,14 @@ dbfiles_to_dict <- function(x, artifact, dataid_uri) {
     for (dbfile in x) {
         i <- i + 1
         file_dst[[i]] = list(
-            "@id" = paste0(dataid_uri, "#", databusFile(dbfile)[["id_string"]]),
-            "file" = paste0(dataid_uri, "/", artifact, "_", databusFile(dbfile)[["id_string"]]),
+            "@id" = paste0(dataid_uri, "#", getDatabusFile(dbfile)[["id_string"]]),
+            "file" = paste0(dataid_uri, "/", artifact, "_", getDatabusFile(dbfile)[["id_string"]]),
             "@type" = "dataid:Part",
-            "format" = databusFile(dbfile)[["file_ext"]],
+            "format" = getDatabusFile(dbfile)[["file_ext"]],
             "compression" = "none",
             "downloadURL" = dbfile[["file"]],
-            "byteSize" = as.character(databusFile(dbfile)[["content_length"]]),
-            "sha256sum" = databusFile(dbfile)[["sha256sum"]]
+            "byteSize" = as.character(getDatabusFile(dbfile)[["content_length"]]),
+            "sha256sum" = getDatabusFile(dbfile)[["sha256sum"]]
         )
         for (kv in dbfile["metadata"]) file_dst[[i]][paste0("dcv:", names(kv))] = kv
     }
