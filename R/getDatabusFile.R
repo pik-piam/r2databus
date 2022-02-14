@@ -1,5 +1,15 @@
+#' getDatabusFile
+#'
+#' Fetches the necessary information of a file URI for the deployment to the Databus
+#'
+#' @param x a list that has to contain the named items "file", "metadata" and "filetype"
+#' @return a named list with the information gathered
+#' @author Anastasis Giannousakis
+#' @importFrom httr GET
+#' @importFrom digest digest
+#' @export
+
 getDatabusFile <- function(x) {
-  #Fetches the necessary information of a file URI for the deployment to the databus.
 
   resp <- GET(x[["file"]])
   if (resp["status_code"] > 400)
