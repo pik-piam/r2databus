@@ -1,4 +1,4 @@
-#' dbfiles_to_dict
+#' dbfilesToDict
 #'
 #' Returns a named list with special strings for file annotation on the Databus
 #'
@@ -11,7 +11,7 @@
 #' @export
 #' @seealso \code{\link{getDatabusFile}}
 
-dbfiles_to_dict <- function(x, artifact, dataid_uri) {
+dbfilesToDict <- function(x, artifact, dataid_uri) {
   file_dst <- list()
   i <- 0
   for (dbfile in x) {

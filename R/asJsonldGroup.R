@@ -13,13 +13,13 @@
 
 asJsonldGroup <- function(x, context = "https://downloads.dbpedia.org/databus/context.jsonld") {
 
-  group_uri <- getTargetURIGroup(x)
+  groupUri <- getTargetURIGroup(x)
 
   group_data_dict <- list(
     "@context" = context,
     "@graph" = list(
       list(
-        "@id" = group_uri,
+        "@id" = groupUri,
         "@type" = "dataid:Group",
         "label" = list("@value" = x[["label"]], "@language" = "en"),
         "title" = list("@value" = x[["title"]], "@language" = "en"),

@@ -15,13 +15,13 @@
 asJsonldDataID <- function(x, context = "https://downloads.dbpedia.org/databus/context.jsonld",
                            dBusUri = "https://dev.databus.dbpedia.org") {
 
-  distinct_cvs <- function(x) {
-    distinct_cv_definitions <- list()
+  distinctCvs <- function(x) {
+    distinctCvDefinitions <- list()
     i <- 0
     for (dbfile in x) {
       for (item in names(dbfile[["metadata"]])) {
         i <- i + 1
-        distinct_cv_definitions[[i]] <- list(
+        distinctCvDefinitions[[i]] <- list(
           "@type" = "rdf:Property",
           "@id" = paste0("dcv:", item),
           "rdfs:subPropertyOf" = list("@id" = "dataid:contentVariant")
@@ -29,7 +29,7 @@ asJsonldDataID <- function(x, context = "https://downloads.dbpedia.org/databus/c
       }
 
     }
-    return(unique(distinct_cv_definitions))
+    return(unique(distinctCvDefinitions))
   }
 
   dataid_uri <- getTargetURIDataID(x)
@@ -52,11 +52,11 @@ asJsonldDataID <- function(x, context = "https://downloads.dbpedia.org/databus/c
         "abstract" = list("@value" = x[["abstract"]], "@language" = "en"),
         "description" = list("@value" = x[["description"]], "@language" = "en"),
         "license" = list("@id" = x[["license"]]),
-        "distribution" = dbfiles_to_dict(x[["databus_files"]], x[["artifact"]], dataid_uri)
+        "distribution" = dbfilesToDict(x[["databus_files"]], x[["artifact"]], dataid_uri)
       )
     )
   )
-  for (i in distinct_cvs(x[["databus_files"]])) group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(i))
+  for (i in distinctCvs(x[["databus_files"]])) group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(i))
   group_data_dict[["@graph"]] <- c(
     group_data_dict[["@graph"]],
     list(
