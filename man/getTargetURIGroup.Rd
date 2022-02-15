@@ -18,7 +18,7 @@ the URI used in the POST request that publishes Group documentation
 Returns the URI used in the POST request that publishes the Group documentation
 }
 \seealso{
-\code{\link{getTargetURIDataID}}
+\code{\link{deploy_to_dev_databus}}
 }
 \author{
 Anastasis Giannousakis

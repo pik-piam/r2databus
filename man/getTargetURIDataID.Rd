@@ -18,7 +18,7 @@ the URI used in the POST request that publishes the DataID documentation
 Returns the URI used in the POST request that publishes the DataID documentation
 }
 \seealso{
-\code{\link{getTargetURIGroup}}
+\code{\link{deploy_to_dev_databus}}
 }
 \author{
 Anastasis Giannousakis

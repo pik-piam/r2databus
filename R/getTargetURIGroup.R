@@ -7,8 +7,8 @@
 #' @return the URI used in the POST request that publishes Group documentation
 #' @author Anastasis Giannousakis
 #' @export
-#' @seealso \code{\link{getTargetURIDataID}}
+#' @seealso \code{\link{deploy_to_dev_databus}}
 
 getTargetURIGroup <- function(x, dBusUri = "https://dev.databus.dbpedia.org") {
-  return(paste0(dBusUri , "/", x["account_name"], "/", x["id"]))
+  return(paste0(dBusUri, "/", x["account_name"], "/", x["id"]))
 }

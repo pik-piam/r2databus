@@ -1,6 +1,19 @@
+#' asJsonldDataID
+#'
+#' Returns the DataID documentation as JSON-LD string
+#'
+#' @param x a named list that contains the metadata and link to the dataset
+#' that will be published on the Databus
+#' @param context string containing the "context" URI of the Databus
+#' @param dBusUri string containing the base Databus URI for POST requests
+#' @return  the DataID documentation as JSON-LD string
+#' @author Anastasis Giannousakis
 #' @importFrom jsonlite toJSON
+#' @export
+#' @seealso \code{\link{asJsonldGroup}}
 
-asJsonldDataID <- function(context, x, dBusUri = "https://dev.databus.dbpedia.org") {
+asJsonldDataID <- function(x, context = "https://downloads.dbpedia.org/databus/context.jsonld",
+                           dBusUri = "https://dev.databus.dbpedia.org") {
 
   distinct_cvs <- function(x) {
     distinct_cv_definitions <- list()
@@ -10,8 +23,8 @@ asJsonldDataID <- function(context, x, dBusUri = "https://dev.databus.dbpedia.or
         i <- i + 1
         distinct_cv_definitions[[i]] <- list(
           "@type" = "rdf:Property",
-          "@id" = paste0('dcv:', item),
-          "rdfs:subPropertyOf" = list('@id' = 'dataid:contentVariant')
+          "@id" = paste0("dcv:", item),
+          "rdfs:subPropertyOf" = list("@id" = "dataid:contentVariant")
         )
       }
 
@@ -19,16 +32,16 @@ asJsonldDataID <- function(context, x, dBusUri = "https://dev.databus.dbpedia.or
     return(unique(distinct_cv_definitions))
   }
 
-  dataid_uri = getTargetURIDataID(x)
+  dataid_uri <- getTargetURIDataID(x)
 
-  group_data_dict = list(
+  group_data_dict <- list(
     "@context" = context,
-    "@graph"= list(
+    "@graph" = list(
       list(
         "@type" = "dataid:Dataset",
         "@id" = paste0(dataid_uri, "#Dataset"),
         "version" = dataid_uri,
-        "artifact" = paste0(dBusUri, "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]),
+        "artifact" = paste0(dBusUri, "/", x["account_name"], "/", x["group"], "/", x["artifact"]),
         "group" = getTargetURIGroup(x),
         "hasVersion" = x[["version"]],
         "issued" = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
@@ -44,9 +57,23 @@ asJsonldDataID <- function(context, x, dBusUri = "https://dev.databus.dbpedia.or
     )
   )
   for (i in distinct_cvs(x[["databus_files"]])) group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(i))
-  group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(list("@id" = paste0(dBusUri, "/", x["account_name"] , "/", x["group"] , "/", x["artifact"]), "@type" = "dataid:Artifact")))
-  group_data_dict[["@graph"]] <- c(group_data_dict[["@graph"]], list(list("@id" = paste0(dBusUri, "/", x["account_name"] , "/", x["group"] , "/", x["artifact"], "/", x["version"]), "@type" = "dataid:Version")))
+  group_data_dict[["@graph"]] <- c(
+    group_data_dict[["@graph"]],
+    list(
+      list(
+        "@id" = paste0(dBusUri, "/", x["account_name"], "/", x["group"], "/", x["artifact"]),
+        "@type" = "dataid:Artifact")
+      )
+    )
+
+  group_data_dict[["@graph"]] <- c(
+    group_data_dict[["@graph"]],
+    list(
+      list(
+        "@id" = paste0(dBusUri, "/", x["account_name"], "/", x["group"], "/", x["artifact"], "/", x["version"]),
+        "@type" = "dataid:Version")
+      )
+    )
   return(toJSON(group_data_dict, auto_unbox = TRUE))
 
 }
-

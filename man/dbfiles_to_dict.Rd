@@ -11,7 +11,8 @@ dbfiles_to_dict(x, artifact, dataid_uri)
 
 \item{artifact}{string containing the artifact name}
 
-\item{dataid_uri}{string containing the URI used in the POST request that publishes the DataID documentation, as created by \code{\link{getTargetURIDataID}}}
+\item{dataid_uri}{string containing the URI used in the POST request that publishes the DataID documentation,
+as created by \code{\link{getTargetURIDataID}}}
 }
 \value{
 a named list with special strings for file annotation on the Databus

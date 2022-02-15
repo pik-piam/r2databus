@@ -1,12 +1,23 @@
+#' asJsonldGroup
+#'
+#' Returns the Group documentation as JSON-LD string
+#'
+#' @param x a named list that contains the metadata of the Group that will
+#' publish data on the Databus
+#' @param context string containing the "context" URI of the Databus
+#' @return  the Group documentation as JSON-LD string
+#' @author Anastasis Giannousakis
 #' @importFrom jsonlite toJSON
+#' @export
+#' @seealso \code{\link{asJsonldDataID}}
 
-asJsonldGroup <- function(context, x) {
+asJsonldGroup <- function(x, context = "https://downloads.dbpedia.org/databus/context.jsonld") {
 
-  group_uri = getTargetURIGroup(x)
+  group_uri <- getTargetURIGroup(x)
 
-  group_data_dict = list(
+  group_data_dict <- list(
     "@context" = context,
-    "@graph"= list(
+    "@graph" = list(
       list(
         "@id" = group_uri,
         "@type" = "dataid:Group",
@@ -21,4 +32,3 @@ asJsonldGroup <- function(context, x) {
   return(toJSON(group_data_dict, auto_unbox = TRUE))
 
 }
-
