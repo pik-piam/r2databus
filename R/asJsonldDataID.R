@@ -32,9 +32,9 @@ asJsonldDataID <- function(x, context = "https://downloads.dbpedia.org/databus/c
     return(unique(distinctCvDefinitions))
   }
 
-  dataid_uri <- getTargetURIDataID(x)
+  dataid_uri <- getTargetURIDataID(x) # nolint
 
-  group_data_dict <- list(
+  group_data_dict <- list( # nolint
     "@context" = context,
     "@graph" = list(
       list(

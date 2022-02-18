@@ -1,6 +1,6 @@
 context <- "https://downloads.dbpedia.org/databus/context.jsonld"
 
-account_name <- "giannoupik"
+account_name <- "giannoupik" # nolint
 
 group <- "general8R"
 
@@ -36,7 +36,7 @@ files <- list(
          "filetype" = "json")
 )
 
-databus_version <- list(
+databus_version <- list( # nolint
     account_name = account_name,
     id = group,
     group = group,
@@ -52,7 +52,7 @@ databus_version <- list(
     databus_files = files
 )
 
-databus_group <- list(
+databus_group <- list( # nolint
     account_name = account_name,
     id = group,
     label = "Test Group 8R",

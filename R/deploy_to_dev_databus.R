@@ -12,8 +12,8 @@
 #' @importFrom httr add_headers POST
 #' @export
 
-deploy_to_dev_databus <- function(api_key, group, dataid,
-                                  post_databus_uri = "https://dev.databus.dbpedia.org/system/publish") {
+deploy_to_dev_databus <- function(api_key, group, dataid, # nolint
+                                  post_databus_uri = "https://dev.databus.dbpedia.org/system/publish") { # nolint
 
   message(paste0("Deploying Group"))
   groupld <- asJsonldGroup(context = context, x = group)

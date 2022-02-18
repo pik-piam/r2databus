@@ -11,8 +11,8 @@
 #' @export
 #' @seealso \code{\link{getDatabusFile}}
 
-dbfilesToDict <- function(x, artifact, dataid_uri) {
-  file_dst <- list()
+dbfilesToDict <- function(x, artifact, dataid_uri) { # nolint
+  file_dst <- list() # nolint
   i <- 0
   for (dbfile in x) {
     i <- i + 1
