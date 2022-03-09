@@ -11,8 +11,8 @@ version <- "2022-02-11"
 title <- "Test Title 8R"
 
 
-# currently its advised to use the internal webid found at https://dev.databus.dbpedia.org/{{user}}#settings
-publisher <- paste0("https://dev.databus.dbpedia.org/", account_name, "#this")
+# currently its advised to use the internal webid found at https://energy.databus.dbpedia.org/{{user}}#settings
+publisher <- paste0("https://energy.databus.dbpedia.org/", account_name, "#this")
 
 label <- "Test Label 8R"
 

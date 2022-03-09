@@ -4,7 +4,7 @@
 \alias{getTargetURIGroup}
 \title{getTargetURIGroup}
 \usage{
-getTargetURIGroup(x, dBusUri = "https://dev.databus.dbpedia.org")
+getTargetURIGroup(x, dBusUri = "https://energy.databus.dbpedia.org")
 }
 \arguments{
 \item{x}{a list that has to contain the named strings "account_name" and "id"}

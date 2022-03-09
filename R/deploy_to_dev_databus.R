@@ -1,9 +1,9 @@
 #' deploy_to_dev_databus
 #'
-#' Function that executes the deployment to the Databus (dev.databus.dbpedia.org)
+#' Function that executes the deployment to the Databus (energy.databus.dbpedia.org)
 #'
 #' @param api_key a personal and secret API key (can be found or generated
-#' under https://dev.databus.dbpedia.org/{{user}}#settings)
+#' under https://energy.databus.dbpedia.org/{{user}}#settings)
 #' @param group the Group documentation as JSON-LD string
 #' @param dataid the DataID documentation as JSON-LD string
 #' @param post_databus_uri string containing the Databus URI for POST requests
@@ -13,7 +13,7 @@
 #' @export
 
 deploy_to_dev_databus <- function(api_key, group, dataid, # nolint
-                                  post_databus_uri = "https://dev.databus.dbpedia.org/system/publish") { # nolint
+                                  post_databus_uri = "https://energy.databus.dbpedia.org/system/publish") { # nolint
 
   message(paste0("Deploying Group"))
   groupld <- asJsonldGroup(context = context, x = group)

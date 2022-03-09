@@ -9,6 +9,6 @@
 #' @export
 #' @seealso \code{\link{deploy_to_dev_databus}}
 
-getTargetURIDataID <- function(x, dBusUri = "https://dev.databus.dbpedia.org") {
+getTargetURIDataID <- function(x, dBusUri = "https://energy.databus.dbpedia.org") {
   return(paste0(dBusUri, "/", x["account_name"], "/", x["group"], "/", x["artifact"], "/", x["version"]))
 }

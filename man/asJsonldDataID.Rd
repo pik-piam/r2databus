@@ -7,7 +7,7 @@
 asJsonldDataID(
   x,
   context = "https://downloads.dbpedia.org/databus/context.jsonld",
-  dBusUri = "https://dev.databus.dbpedia.org"
+  dBusUri = "https://energy.databus.dbpedia.org"
 )
 }
 \arguments{

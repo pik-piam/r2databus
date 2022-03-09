@@ -4,7 +4,7 @@
 \alias{getTargetURIDataID}
 \title{getTargetURIDataID}
 \usage{
-getTargetURIDataID(x, dBusUri = "https://dev.databus.dbpedia.org")
+getTargetURIDataID(x, dBusUri = "https://energy.databus.dbpedia.org")
 }
 \arguments{
 \item{x}{a list that has to contain the named strings "account_name", "group", "artifact" and "version"}

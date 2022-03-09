@@ -9,6 +9,6 @@
 #' @export
 #' @seealso \code{\link{deploy_to_dev_databus}}
 
-getTargetURIGroup <- function(x, dBusUri = "https://dev.databus.dbpedia.org") {
+getTargetURIGroup <- function(x, dBusUri = "https://energy.databus.dbpedia.org") {
   return(paste0(dBusUri, "/", x["account_name"], "/", x["id"]))
 }

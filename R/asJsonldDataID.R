@@ -13,7 +13,7 @@
 #' @seealso \code{\link{asJsonldGroup}}
 
 asJsonldDataID <- function(x, context = "https://downloads.dbpedia.org/databus/context.jsonld",
-                           dBusUri = "https://dev.databus.dbpedia.org") {
+                           dBusUri = "https://energy.databus.dbpedia.org") {
 
   distinctCvs <- function(x) {
     distinctCvDefinitions <- list()

@@ -8,12 +8,12 @@ deploy_to_dev_databus(
   api_key,
   group,
   dataid,
-  post_databus_uri = "https://dev.databus.dbpedia.org/system/publish"
+  post_databus_uri = "https://energy.databus.dbpedia.org/system/publish"
 )
 }
 \arguments{
 \item{api_key}{a personal and secret API key (can be found or generated
-under https://dev.databus.dbpedia.org/{{user}}#settings)}
+under https://energy.databus.dbpedia.org/{{user}}#settings)}
 
 \item{group}{the Group documentation as JSON-LD string}
 
@@ -25,7 +25,7 @@ under https://dev.databus.dbpedia.org/{{user}}#settings)}
 the POST request response object for further analysis
 }
 \description{
-Function that executes the deployment to the Databus (dev.databus.dbpedia.org)
+Function that executes the deployment to the Databus (energy.databus.dbpedia.org)
 }
 \author{
 Anastasis Giannousakis
