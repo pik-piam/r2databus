@@ -11,7 +11,7 @@
 #' @export
 
 databusQuery <- function(url = "https://databus.dbpedia.org/repo/sparql", q = NULL,
-                         metadata = list("dataid-cv:type" = c("emissiondata", ""))) {
+                         metadata = list("dataid-cv:type" = c("emissiondata", "bla"))) {
 
 
   if (is.null(q)) q <- "
@@ -28,15 +28,20 @@ databusQuery <- function(url = "https://databus.dbpedia.org/repo/sparql", q = NU
 
 
   { ?distribution <METADATAKEY> ?c0 .
-			VALUES ?c0 {
-				'parameters_assumptions'^^<http://www.w3.org/2001/XMLSchema#string>
-				'ghg_emissions_overview'^^<http://www.w3.org/2001/XMLSchema#string>
-			}
-			}
+      VALUES ?c0 {
+        METADATASTRING
+      }
+      }
     }
   }
   "
-
-  return(SPARQL(url, sub("METADATASTRING", metadata, q)))
+  q <- sub("METADATAKEY", names(metadata)[1], q)
+  q <- sub("METADATASTRING",
+           paste0("'",
+                                    metadata[[1]],
+                                    "'^^<http://www.w3.org/2001/XMLSchema#string>",
+                                    collapse = " "),
+           q)
+  return(SPARQL(url, q))
 
 }

@@ -7,15 +7,15 @@
 databusQuery(
   url = "https://databus.dbpedia.org/repo/sparql",
   q = NULL,
-  metadata = "emissiondata"
+  metadata = list(`dataid-cv:type` = c("emissiondata", "bla"))
 )
 }
 \arguments{
 \item{url}{string containing the Databus URL for SPARQL queries (endpoint)}
 
-\item{q}{the SPARQL query (prefixes and query)}
+\item{q}{the SPARQL query (prefixes and query code)}
 
-\item{metadata}{the metadata to search for (string)}
+\item{metadata}{the metadata to search for (list of key-value(s) pairs, see example)}
 }
 \value{
 the SPARQL query response object for further analysis
