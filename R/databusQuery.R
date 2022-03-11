@@ -3,15 +3,15 @@
 #' Function that executes a SPARQL Query on the Databus
 #'
 #' @param url string containing the Databus URL for SPARQL queries (endpoint)
-#' @param q the SPARQL query (prefixes and query)
-#' @param metadata the metadata to search for (string)
+#' @param q the SPARQL query (prefixes and query code)
+#' @param metadata the metadata to search for (list of key-value(s) pairs, see example)
 #' @return the SPARQL query response object for further analysis
 #' @author Anastasis Giannousakis
 #' @importFrom SPARQL SPARQL
 #' @export
 
 databusQuery <- function(url = "https://databus.dbpedia.org/repo/sparql", q = NULL,
-                         metadata = "emissiondata") {
+                         metadata = list("dataid-cv:type" = c("emissiondata", ""))) {
 
 
   if (is.null(q)) q <- "
@@ -27,10 +27,16 @@ databusQuery <- function(url = "https://databus.dbpedia.org/repo/sparql", q = NU
       ?distribution dataid:file ?file .
 
 
-      { ?distribution <dataid-cv:type> 'METADATASTRING'^^<http://www.w3.org/2001/XMLSchema#string> . }
+  { ?distribution <METADATAKEY> ?c0 .
+			VALUES ?c0 {
+				'parameters_assumptions'^^<http://www.w3.org/2001/XMLSchema#string>
+				'ghg_emissions_overview'^^<http://www.w3.org/2001/XMLSchema#string>
+			}
+			}
     }
   }
   "
+
   return(SPARQL(url, sub("METADATASTRING", metadata, q)))
 
 }
