@@ -15,24 +15,24 @@
 
 deploy_to_energy_databus <- function(api_key, groupJson = NULL, dataidJson = NULL) { # nolint
 
-  message(paste0("Deploying Group"))
+  message("Deploying Group")
   if (is.null(groupJson)) {
     groupFile <- system.file("extdata", "group.jsonld", package = "r2databus")
     groupJson <- read_json(groupFile)
   }
-  url <- groupJson$`@graph`$`@id`
+  url <- groupJson[["@graph"]][["@id"]]
   PUT(url = url,
       body = groupJson,
       encode = "json",
       config = add_headers("X-API-Key" = api_key, "Content-Type" = "application/json")
   )
 
-  message(paste0("Deploying DataID"))
+  message("Deploying DataID")
   if (is.null(dataidJson)) {
     dataFile <- system.file("extdata", "dataid.jsonld", package = "r2databus")
     dataidJson <- read_json(dataFile)
   }
-  url <- sub("#Dataset$", "", dataidJson$`@graph`$`@id`)
+  url <- sub("#Dataset$", "", dataidJson[["@graph"]][["@id"]])
   PUT(url = url,
       body = dataidJson,
       encode = "json",
