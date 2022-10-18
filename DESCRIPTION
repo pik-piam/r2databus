@@ -9,9 +9,11 @@ Depends:
 Imports:
     jsonlite,
     httr,
-    digest
+    digest,
+    dplyr,
+    tidyr
 Description: Provides tools for uploading, downloading, and annotating data to 
     the DBpedia Databus.
 Encoding: UTF-8
 License: BSD_2_clause + file LICENSE
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
