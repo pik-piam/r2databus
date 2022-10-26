@@ -1,26 +1,27 @@
 #' Tool: DatabusDownload
 #'
-#' This function downloads a dataset and its metadata from the Energy Databus
+#' This function downloads a dataset (file) and its metadata from the Energy Databus
 #' (https://energy.databus.dbpedia.org/)
-#' Data are organised in artifacts on the databus. An artifact contains one or
-#' more files (datasets)
+#' Data are organised in "artifacts" on the databus. An artifact contains one or
+#' more datasets (files)
 #'
-#' @param url the Databus page hosting the artifact (i.e. one or more datasets
+#' @param artifact the Databus page hosting the artifact (i.e. one or more datasets
 #' and their metadata)
-#' @param subtype the specific file (dataset) to download
-#' @return a list with the metadata associated with the file (dataset)
+#' @param subtype the specific dataset (file) to download
+#' @param databusURL in case another databus hosts the data, e.g. https://databus.dbpedia.org
+#' @return a list with the metadata associated with the dataset (file)
 #' @importFrom dplyr filter select distinct
 #' @importFrom tidyr %>%
 #' @author Anastasis Giannousakis
 #' @examples
 #' toolDatabusDownload("https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine",
-#' subtype = "https/2022-10-12/rli-dea-td-generation-wind-turbine.zip")
+#' "https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine/2022-10-12/rli-dea-td-generation-wind-turbine.zip")
 #'
 #' @export
-toolDatabusDownload <- function(url, subtype = NULL) {
+toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://energy.databus.dbpedia.org" ) {
 
   # remove trailing slash
-  url <- sub("/$", "", url)
+  artifact <- sub("/$", "", artifact)
 
   # read file metadata
   q1 <- "PREFIX dataid: <http://dataid.dbpedia.org/ns/core#>
@@ -41,14 +42,16 @@ toolDatabusDownload <- function(url, subtype = NULL) {
            }
          }"
 
-  q1 <- sub("DATASET_URL", url, q1)
-  metaData <- SPARQL(url =  "https://energy.databus.dbpedia.org/sparql", query = q1)[["results"]]
+  q1 <- sub("DATASET_URL", artifact, q1)
+  metaData <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q1)[["results"]]
   metaData[, "file"] <- sub("^<", "", metaData[, "file"])
   metaData[, "file"] <- sub(">$", "", metaData[, "file"])
   metaData <- filter(metaData, file == subtype)  %>% select(c("p", "o"))
   metaData[, "o"] <- sub("^<", "", metaData[, "o"])
   metaData[, "o"] <- sub(">$", "", metaData[, "o"])
-  downloadURL <- filter(metaData, p == "<http://www.w3.org/ns/dcat#downloadURL>") %>% select("o") %>% as.character()
+  downloadURL <- filter(metaData,
+                        p == "<http://www.w3.org/ns/dcat#downloadURL>"
+                        ) %>% select("o") %>% as.character()
 
   try(download.file(url = downloadURL, destfile = "dataBusFile", mode = "wb"))
 
@@ -79,25 +82,23 @@ toolDatabusDownload <- function(url, subtype = NULL) {
 
         }"
 
-  q2 <- sub("DATASET_URL", url, q2)
-  metaData2 <- SPARQL(url =  "https://energy.databus.dbpedia.org/sparql", query = q2)[["results"]]
+  q2 <- sub("DATASET_URL", artifact, q2)
+  metaData2 <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q2)[["results"]]
   metaData2[, "file"] <- sub("^<", "", metaData2[, "file"])
   metaData2[, "file"] <- sub(">$", "", metaData2[, "file"])
-  metaData2 <- filter(metaData2, file == subtype, modified == max(metaData2$modified)) # filter by subtype and pick the newest version
-#    return(metaData2)
-  # metaData <- distinct(metaData)
-  # metaData[,"o"] <- sub("^<", "", metaData[,"o"])
-  # metaData[,"o"] <- sub(">$", "", metaData[,"o"])
-  # # read file name and download data
-  # fileURL <- filter(metaData, p == "<http://www.w3.org/ns/dcat#distribution>") %>% select("o") %>% as.character()
-  # try(download.file(url = fileURL, destfile = "dataBusFile", mode = "wb"))
-  #
+  # filter by subtype and pick the newest version
+  metaData2 <- filter(metaData2,
+                      file == subtype,
+                      modified == max(metaData2$modified))
+
+  releaseDate <- metaData2[, "release_date"] %>% as.numeric() %>% as.POSIXct(origin="1970-01-01") %>% as.Date()
+
   return(list(url           = downloadURL,
               doi           = NULL,
               title         = metaData2[, "title"],
               author        = metaData2[, "author"],
               version       = metaData2[, "version"],
-              release_date  = metaData2[, "release_date"] %>% as.numeric() %>% as.POSIXct(origin="1970-01-01") %>% as.Date(),
+              release_date  = releaseDate,
               description   = metaData2[, "description"],
               license       = metaData2[, "license"],
               reference     = NULL,
