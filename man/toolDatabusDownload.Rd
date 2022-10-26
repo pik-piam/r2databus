@@ -4,22 +4,32 @@
 \alias{toolDatabusDownload}
 \title{Tool: DatabusDownload}
 \usage{
-toolDatabusDownload(url, subtype = NULL)
+toolDatabusDownload(
+  artifact,
+  subtype = NULL,
+  databusURL = "https://energy.databus.dbpedia.org"
+)
 }
 \arguments{
-\item{url}{the Databus page hosting the metadata}
+\item{artifact}{the Databus page hosting the artifact (i.e. one or more datasets
+and their metadata)}
 
-\item{subtype}{the specific dataset to download}
+\item{subtype}{the specific dataset (file) to download}
+
+\item{databusURL}{in case another databus hosts the data, e.g. https://databus.dbpedia.org}
 }
 \value{
-a list with the metadata associated with the dataset
+a list with the metadata associated with the dataset (file)
 }
 \description{
-This function downloads a dataset and its metadata from the Energy Databus (https://energy.databus.dbpedia.org/)
+This function downloads a dataset (file) and its metadata from the Energy Databus
+(https://energy.databus.dbpedia.org/)
+Data are organised in "artifacts" on the databus. An artifact contains one or
+more datasets (files)
 }
 \examples{
 toolDatabusDownload("https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine",
-subtype = "https/2022-10-12/rli-dea-td-generation-wind-turbine.zip")
+"https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine/2022-10-12/rli-dea-td-generation-wind-turbine.zip")
 
 }
 \author{
