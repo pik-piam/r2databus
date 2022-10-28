@@ -12,16 +12,22 @@
 #' @return a list with the metadata associated with the dataset (file)
 #' @importFrom dplyr filter select distinct
 #' @importFrom tidyr %>%
+#' @importFrom utils download.file
 #' @author Anastasis Giannousakis
 #' @examples
-#' toolDatabusDownload("https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine",
-#' "https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine/2022-10-12/rli-dea-td-generation-wind-turbine.zip")
-#'
+#' \dontrun{
+#' toolDatabusDownload("https://energy.databus.dbpedia.org/giannoupik/GROUPNAME/ARTIFACT/",
+#' "https://energy.databus.dbpedia.org/giannoupik/GROUPNAME/ARTIFACT/YOURVERSION/
+#' ARTIFACT_FOO=BAR_TYPE=SOMEDATATYPE.rdf")
+#' }
 #' @export
 toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://energy.databus.dbpedia.org" ) {
 
   # remove trailing slash
   artifact <- sub("/$", "", artifact)
+
+  p <- NULL
+  modified <- NULL
 
   # read file metadata
   q1 <- "PREFIX dataid: <http://dataid.dbpedia.org/ns/core#>
@@ -43,7 +49,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
          }"
 
   q1 <- sub("DATASET_URL", artifact, q1)
-  metaData <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q1)[["results"]]
+  metaData <- SPARQL::SPARQL(url =  paste0(databusURL, "/sparql"), query = q1)[["results"]]
   metaData[, "file"] <- sub("^<", "", metaData[, "file"])
   metaData[, "file"] <- sub(">$", "", metaData[, "file"])
   metaData <- filter(metaData, file == subtype)  %>% select(c("p", "o"))
@@ -83,7 +89,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
         }"
 
   q2 <- sub("DATASET_URL", artifact, q2)
-  metaData2 <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q2)[["results"]]
+  metaData2 <- SPARQL::SPARQL(url =  paste0(databusURL, "/sparql"), query = q2)[["results"]]
   metaData2[, "file"] <- sub("^<", "", metaData2[, "file"])
   metaData2[, "file"] <- sub(">$", "", metaData2[, "file"])
   # filter by subtype and pick the newest version

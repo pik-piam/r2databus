@@ -28,9 +28,11 @@ Data are organised in "artifacts" on the databus. An artifact contains one or
 more datasets (files)
 }
 \examples{
-toolDatabusDownload("https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine",
-"https://energy.databus.dbpedia.org/ludee/dea-technology-data/rli-dea-td-generation-wind-turbine/2022-10-12/rli-dea-td-generation-wind-turbine.zip")
-
+\dontrun{
+toolDatabusDownload("https://energy.databus.dbpedia.org/giannoupik/GROUPNAME/ARTIFACT/",
+"https://energy.databus.dbpedia.org/giannoupik/GROUPNAME/ARTIFACT/YOURVERSION/
+ARTIFACT_FOO=BAR_TYPE=SOMEDATATYPE.rdf")
+}
 }
 \author{
 Anastasis Giannousakis
