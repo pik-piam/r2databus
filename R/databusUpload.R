@@ -10,22 +10,30 @@
 #' @importFrom httr add_headers PUT GET
 #' @importFrom digest digest
 #' @importFrom jsonlite read_json
+#' @examples
+#' \dontrun{
+#' databusUpload(myKey = "a-s3cret-k3y", myData = NULL)
+#' }
 #' @export
 
-databusUpload <- function(myKey, myData = NULL) {
+databusUpload <- function(myKey = NULL, myData = NULL) {
 
   .getIdString <- function(x) {
     tmp <- NULL
-    for(i in x["metadata"]) tmp <- paste0(tmp, names(i), "=", i, collapse = "_")
-    idString = paste0(tmp, ".", x[["extension"]])
+    for (i in x["metadata"]) tmp <- paste0(tmp, names(i), "=", i, collapse = "_")
+    idString <- paste0(tmp, ".", x[["extension"]])
     return(idString)
   }
+
+  # if no key, take pik-piam key from the cluster
+  if (is.null(myKey) && file.exists("/p")) myKey <- Sys.getenv()[["DATABUSKEY"]]
 
   # if no myData object is given, take defaults from the inst folder
   if (is.null(myData)) {
     dataFile <- system.file("extdata", "myData.json", package = "r2databus")
     dataList <- read_json(dataFile)
     dataList[["user"]] <- Sys.info()[["user"]]
+    if (file.exists("/p")) dataList[["user"]] <- Sys.getenv()[["DATABUSUSER"]]
     dataList[["file"]] <- "https://www.w3.org/ns/dcat2.rdf"
     dataList[["extension"]] <- "rdf"
     dataList[["license"]] <- "https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document"

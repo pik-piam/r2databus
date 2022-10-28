@@ -4,7 +4,7 @@
 \alias{databusUpload}
 \title{databusUpload}
 \usage{
-databusUpload(myKey, myData = NULL)
+databusUpload(myKey = NULL, myData = NULL)
 }
 \arguments{
 \item{myKey}{a personal and secret API key (can be found or generated
@@ -15,6 +15,11 @@ under https://energy.databus.dbpedia.org/{{user}}#settings)}
 }
 \description{
 Publishes a dataset on the Databus (energy.databus.dbpedia.org)
+}
+\examples{
+\dontrun{
+databusUpload(myKey = "a-s3cret-k3y", myData = NULL)
+}
 }
 \author{
 Anastasis Giannousakis

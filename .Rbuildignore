@@ -5,3 +5,7 @@
 ^workflow$
 ^\.github$
 ^.*\.zenodo.json$
+^.lintr$
+^tests/.lintr$
+^vignettes/.lintr$
+^codecov\.yml$

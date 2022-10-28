@@ -1,19 +1,22 @@
 Package: r2databus
 Type: Package
 Title: An R interface for the DBpedia Databus
-Date: 2022-03-28
-Version: 0.1.0.9005
+Date: 2022-10-28
+Version: 0.1.0.9006
 Authors@R: c(person("Anastasis", "Giannousakis", email = "giannou@pik-potsdam.de", role = c("aut", "cre")))
+Depends:
+    SPARQL
 Imports:
     jsonlite,
     httr,
     digest,
     dplyr,
     tidyr,
-    utils,
-    SPARQL
+    utils
 Suggests:
-    knitr
+    covr,
+    knitr,
+    markdown
 Description: Provides tools for uploading, downloading, and annotating data to 
     the DBpedia Databus.
 Encoding: UTF-8

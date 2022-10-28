@@ -13,7 +13,6 @@
 #' @importFrom dplyr filter select distinct
 #' @importFrom tidyr %>%
 #' @importFrom utils download.file
-#' @importFrom SPARQL SPARQL
 #' @author Anastasis Giannousakis
 #' @examples
 #' \dontrun{
@@ -22,7 +21,7 @@
 #' ARTIFACT_FOO=BAR_TYPE=SOMEDATATYPE.rdf")
 #' }
 #' @export
-toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://energy.databus.dbpedia.org" ) {
+toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://energy.databus.dbpedia.org") {
 
   # remove trailing slash
   artifact <- sub("/$", "", artifact)
@@ -50,7 +49,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
          }"
 
   q1 <- sub("DATASET_URL", artifact, q1)
-  metaData <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q1)[["results"]]
+  metaData <- SPARQL::SPARQL(url =  paste0(databusURL, "/sparql"), query = q1)[["results"]]
   metaData[, "file"] <- sub("^<", "", metaData[, "file"])
   metaData[, "file"] <- sub(">$", "", metaData[, "file"])
   metaData <- filter(metaData, file == subtype)  %>% select(c("p", "o"))
@@ -58,7 +57,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
   metaData[, "o"] <- sub(">$", "", metaData[, "o"])
   downloadURL <- filter(metaData,
                         p == "<http://www.w3.org/ns/dcat#downloadURL>"
-                        ) %>% select("o") %>% as.character()
+                        ) %>% select("o") %>% as.character() # nolint
 
   try(download.file(url = downloadURL, destfile = "dataBusFile", mode = "wb"))
 
@@ -90,7 +89,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
         }"
 
   q2 <- sub("DATASET_URL", artifact, q2)
-  metaData2 <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q2)[["results"]]
+  metaData2 <- SPARQL::SPARQL(url =  paste0(databusURL, "/sparql"), query = q2)[["results"]]
   metaData2[, "file"] <- sub("^<", "", metaData2[, "file"])
   metaData2[, "file"] <- sub(">$", "", metaData2[, "file"])
   # filter by subtype and pick the newest version
@@ -98,7 +97,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
                       file == subtype,
                       modified == max(metaData2$modified))
 
-  releaseDate <- metaData2[, "release_date"] %>% as.numeric() %>% as.POSIXct(origin="1970-01-01") %>% as.Date()
+  releaseDate <- metaData2[, "release_date"] %>% as.numeric() %>% as.POSIXct(origin = "1970-01-01") %>% as.Date()
 
   return(list(url           = downloadURL,
               doi           = NULL,

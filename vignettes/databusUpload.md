@@ -1,7 +1,7 @@
 ---
 title: "Upload Data to the Energy Databus with R"
 author: "Anastasis Giannousakis"
-date: "`r Sys.Date()`"
+date: "2022-10-28"
 output: pdf_document
 vignette: >
   %\VignetteEngine{knitr::knitr}
@@ -9,9 +9,7 @@ vignette: >
   %\usepackage[UTF-8]{inputenc}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 This document describes an R tool for easy publishing of a dataset on
 the Energy Databus (<https://energy.databus.dbpedia.org/>).
@@ -56,7 +54,8 @@ and `file`. The `file` field has to be pointing to an existing file (URI). The
 
 ## Example
 
-```{r, eval = FALSE}
+
+```r
 r2databus::databusUpload(myKey = "a-s3cr3t-K3y", myData = "/path/to/JSON/file") # nolint
 ```
 
