@@ -13,6 +13,7 @@
 #' @importFrom dplyr filter select distinct
 #' @importFrom tidyr %>%
 #' @importFrom utils download.file
+#' @importFrom SPARQL SPARQL
 #' @author Anastasis Giannousakis
 #' @examples
 #' \dontrun{
@@ -49,7 +50,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
          }"
 
   q1 <- sub("DATASET_URL", artifact, q1)
-  metaData <- SPARQL::SPARQL(url =  paste0(databusURL, "/sparql"), query = q1)[["results"]]
+  metaData <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q1)[["results"]]
   metaData[, "file"] <- sub("^<", "", metaData[, "file"])
   metaData[, "file"] <- sub(">$", "", metaData[, "file"])
   metaData <- filter(metaData, file == subtype)  %>% select(c("p", "o"))
@@ -89,7 +90,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
         }"
 
   q2 <- sub("DATASET_URL", artifact, q2)
-  metaData2 <- SPARQL::SPARQL(url =  paste0(databusURL, "/sparql"), query = q2)[["results"]]
+  metaData2 <- SPARQL(url =  paste0(databusURL, "/sparql"), query = q2)[["results"]]
   metaData2[, "file"] <- sub("^<", "", metaData2[, "file"])
   metaData2[, "file"] <- sub(">$", "", metaData2[, "file"])
   # filter by subtype and pick the newest version
