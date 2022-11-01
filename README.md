@@ -1,8 +1,8 @@
 # An R interface for the DBpedia Databus
 
-R package **r2databus**, version **0.1.0.9006**
+R package **r2databus**, version **0.2.0**
 
-[![CRAN status](https://www.r-pkg.org/badges/version/r2databus)](https://cran.r-project.org/package=r2databus)  [![R build status](https://github.com/giannou/r2databus/workflows/check/badge.svg)](https://github.com/giannou/r2databus/actions) [![codecov](https://codecov.io/gh/giannou/r2databus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/giannou/r2databus) 
+[![CRAN status](https://www.r-pkg.org/badges/version/r2databus)](https://cran.r-project.org/package=r2databus)  [![R build status](https://pik.github.com/pik-piam/r2databus/workflows/check/badge.svg)](https://pik.github.com/pik-piam/r2databus/actions) [![codecov](https://codecov.io/gh/pik-piam/r2databus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/r2databus) 
 
 ## Purpose and Functionality
 
@@ -47,7 +47,7 @@ In case of questions / problems please contact Anastasis Giannousakis <giannou@p
 
 To cite package **r2databus** in publications use:
 
-Giannousakis A (2022). _r2databus: An R interface for the DBpedia Databus_. R package version 0.1.0.9006.
+Giannousakis A (2022). _r2databus: An R interface for the DBpedia Databus_. R package version 0.2.0.
 
 A BibTeX entry for LaTeX users is
 
@@ -56,6 +56,6 @@ A BibTeX entry for LaTeX users is
   title = {r2databus: An R interface for the DBpedia Databus},
   author = {Anastasis Giannousakis},
   year = {2022},
-  note = {R package version 0.1.0.9006},
+  note = {R package version 0.2.0},
 }
 ```
