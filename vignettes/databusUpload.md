@@ -1,0 +1,125 @@
+---
+title: "Upload Data to the Energy Databus with R"
+author: "Anastasis Giannousakis"
+date: "2022-10-28"
+output: pdf_document
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Upload Data to the Energy Databus with R}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+
+
+This document describes an R tool for easy publishing of a dataset on
+the Energy Databus (<https://energy.databus.dbpedia.org/>).
+
+Extensive documentation of the Databus (including other methods for registering data)
+can be found here:  
+<https://github.com/LOD-GEOSS/databus-snippets/wiki>  
+  
+and here:  
+<https://github.com/LOD-GEOSS/LOD-GEOSS.github.io/tree/master/documents>.
+
+The R package `r2databus` contains the function `databusUpload` which will publish
+your dataset on the Databus. The function awaits 2 arguments:
+an API key (string; generated here:  
+`https://energy.databus.dbpedia.org/{{user}}#settings`),
+and an R list or a path to a JSON file with the dataset's metadata. An example of 
+such metadata is shown here:
+```
+List of 14
+ $ user             : chr "USERNAME"
+ $ group            : chr "GROUPNAME"
+ $ groupTitle       : chr "GROUPTITLE"
+ $ groupAbstract    : chr "GROUPABSTRACT"
+ $ groupDescription : chr "GROUPDESCRIPTION"
+ $ artifact         : chr "ARTIFACT"
+ $ version          : chr "YOURVERSION"
+ $ dataidTitle      : chr "DATAIDTITLE"
+ $ dataidAbstract   : chr "DATAIDABSTRACT"
+ $ dataidDescription: chr "DATAIDDESCRIPTION"
+ $ license          : chr "http://this.is/a-license"
+ $ file             : chr "http://this.is/a-file-with-extension.ext"
+ $ extension        : chr "EXT"
+ $ metadata         : List of 2
+  ..$ TYPE: chr "SOMEDATATYPE"
+  ..$ FOO : chr "BAR"
+```
+
+All capitalized strings are mandatory (but you can keep the default values for 
+testing), the same holds for the two paths `license`
+and `file`. The `file` field has to be pointing to an existing file (URI). The 
+`metadata` list can contain more than two items, and has to contain at least one.
+
+## Example
+
+
+```r
+r2databus::databusUpload(myKey = "a-s3cr3t-K3y", myData = "/path/to/JSON/file") # nolint
+```
+
+## Further Reading
+
+The Databus API essentially expects two JSON-LD files with very specific format,
+which the `databusUpload` function will generate for you, and then post to the
+Databus API. These are: a JSON-LD
+file or string, containing the "group" information,
+and another JSON-LD file or string, containing the "DataID".
+They are explained in detail in the following.
+
+
+### Group JSON-LD
+
+JSON-LD files are JSON files (i.e. files in human- and machine-readble format)
+containing **L**inked **D**ata. A 'group' on the databus can contain several DataID's.
+It helps to group registered
+data together. Here is an example of such file:
+
+```
+{
+  "@context": "https://downloads.dbpedia.org/databus/context.jsonld",
+  "@graph": {
+    "@id": "https://energy.databus.dbpedia.org/username/GROUPNAME",
+    "@type": "Group",
+    "title": "Cleaned Data",
+    "abstract": "Various cleaned datasets from DBpedia using AI.",
+    "description": "Various cleaned datasets from DBpedia using AI."
+  }
+}
+```
+
+
+
+### DataID JSON-LD
+
+A DataID contains one or more datasets and their description.
+Here is an example of a DataID JSON-LD:
+
+```
+{
+  "@context": "https://downloads.dbpedia.org/databus/context.jsonld",
+  "@graph": {
+  "@type": "Dataset",
+  "@id": "https://energy.databus.dbpedia.org/giannoupik/GROUPNAME/ARTIFACT/YOURVERSION#Dataset",
+  "hasVersion": "YOURVERSION",
+  "title": "YOURTITLE",
+  "abstract": "YOURABSTRACT",
+  "description": "YOURDESCRIPTION",
+  "license": "http://creativecommons.org/licenses/by/4.0/",
+  "distribution": [
+    {
+      "@id": "https://energy.databus.dbpedia.org/user/group/artf/vers#artf_type=randomData.csv",
+      "@type": "Part",
+      "file": "https://energy.databus.dbpedia.org/user/group/artf/vers/artf_type=randomData.csv",
+      "formatExtension": "csv",
+      "compression": "none",
+      "downloadURL": "https://yum-yab.github.io/data/databus-api-test/first/Sample500.csv",
+      "byteSize": 34243,
+      "sha256sum": "1c69ff99c105ab0f3459a4cd928f14284c996702148a2f62637df69f3e1a01ab",
+      "dcv:type": "randomData"
+    }
+  ]
+}
+}
+```

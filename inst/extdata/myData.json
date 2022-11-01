@@ -1,0 +1,19 @@
+{
+  "user": "USERNAME",
+  "group": "GROUPNAME",
+  "groupTitle": "GROUPTITLE",
+  "groupAbstract": "GROUPABSTRACT",
+  "groupDescription": "GROUPDESCRIPTION",
+  "artifact": "ARTIFACT",
+  "version": "YOURVERSION",
+  "dataidTitle": "DATAIDTITLE",
+  "dataidAbstract": "DATAIDABSTRACT",
+  "dataidDescription": "DATAIDDESCRIPTION",
+  "license": "http://this.is/a-license",
+  "file": "http://this.is/a-file-with-extension.ext",
+  "extension": "EXT",
+  "metadata": {
+    "TYPE": "SOMEDATATYPE",
+    "FOO": "BAR"
+  }
+}
