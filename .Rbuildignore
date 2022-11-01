@@ -9,3 +9,4 @@
 ^tests/.lintr$
 ^vignettes/.lintr$
 ^codecov\.yml$
+^\.git$
