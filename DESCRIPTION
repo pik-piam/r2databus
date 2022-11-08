@@ -1,8 +1,8 @@
 Package: r2databus
 Type: Package
 Title: An R interface for the DBpedia Databus
-Date: 2022-11-01
-Version: 0.2.0
+Date: 2022-11-08
+Version: 0.3.0
 Authors@R: c(person("Anastasis", "Giannousakis", email = "giannou@pik-potsdam.de", role = c("aut", "cre")))
 Depends:
     SPARQL

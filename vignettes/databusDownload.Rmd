@@ -1,0 +1,71 @@
+---
+title: "Download Data from the Energy Databus for use with MADRaT"
+author: "Anastasis Giannousakis"
+date: "`r Sys.Date()`"
+output: pdf_document
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Download Data from the Energy Databus for use with MADRaT}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This document describes an R tool for easy download of a dataset from
+the Energy Databus (<https://energy.databus.dbpedia.org/>) and direct use of said
+dataset in the `madrat`/`mrPACKAGE` universe.
+
+An extensive documentation of the Databus
+can be found here:  
+<https://github.com/LOD-GEOSS/LOD-GEOSS.github.io/tree/master/documents>.
+
+The R package `r2databus` contains the function `toolDatabusDownload`, which, when
+called inside a `mrPACKAGE:::downloadYXZ` ("YXZ" being the name of the dataset) function
+will download the dataset and its metadata, and make them available for further
+processing with `madrat` (see an example `downloadYXZ` function and how it is used
+in `madrat` here:  
+https://pik-piam.r-universe.dev/ui#view:madrat/madrat.html).  
+
+Developers of the `madrat`/`mrPACKAGE` universe can write
+their own `mrPACKAGE:::downloadYXZ` functions based on this example:  
+
+```
+#' @title Download DatabusExample
+#' @description Provides an example on how to write a function that downloads
+#' a dataset from the Energy Databus for use with madrat
+#'
+#' @author Anastasis Giannousakis
+#' @seealso [downloadSource()]
+#' @examples \dontrun{
+#' a <- downloadSource("DatabusExample")
+#' }
+#'
+#' @importFrom r2databus toolDatabusDownload
+
+downloadDatabusExample <- function() {
+  tmp <- toolDatabusDownload(artifact = "https://energy.databus.dbpedia.org/
+                                         pik-piam/GROUPNAME/ARTIFACT/",
+                             subtype = "https://energy.databus.dbpedia.org/pik-piam/GROUPNAME/
+                             ARTIFACT/YOURVERSION/ARTIFACT_FOO=BAR_TYPE=SOMEDATATYPE.rdf")
+  return(tmp)
+}
+```
+
+`toolDatabusDownload` will download the dataset and the metadata and pass on the 
+metadata to `downloadYXZ`, which will further pass on the metadata to `madrat::downloadSource`.
+
+An explanation of the necessary arguments in the call to `toolDatabusDownload`
+can be found in the documentation of `toolDatabusDownload`.  
+
+NOTE: `toolDatabusDownload` performs SPARQL queries on the Databus to find your
+dataset and its metadata. An R `SPARQL` package is used to perform these queries, 
+but since it's not included in the official R-CRAN (status of 7 Nov 2022), the 
+`SPARQL` package is distributed by the PIK-PIAM R-CRAN, found here: 
+
+https://rse.pik-potsdam.de/  
+
+You might need to explicitely load the `SPARQL` package (via `library(SPARQL)` in
+order for your script to function properly).
+

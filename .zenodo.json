@@ -1,6 +1,6 @@
 {
   "title": "r2databus: An R interface for the DBpedia Databus",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "<p>Provides tools for uploading, downloading, and annotating data to \n    the DBpedia Databus.<\/p>",
   "creators": [
     {
