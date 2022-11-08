@@ -100,6 +100,7 @@ toolDatabusDownload <- function(artifact, subtype = NULL, databusURL = "https://
   releaseDate <- metaData2[, "release_date"] %>% as.numeric() %>% as.POSIXct(origin = "1970-01-01") %>% as.Date()
 
   return(list(url           = downloadURL,
+              unit          = NULL,
               doi           = NULL,
               title         = metaData2[, "title"],
               author        = metaData2[, "author"],
