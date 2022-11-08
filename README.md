@@ -1,8 +1,8 @@
 # An R interface for the DBpedia Databus
 
-R package **r2databus**, version **0.2.0**
+R package **r2databus**, version **0.3.0**
 
-[![CRAN status](https://www.r-pkg.org/badges/version/r2databus)](https://cran.r-project.org/package=r2databus)  [![R build status](https://pik.github.com/pik-piam/r2databus/workflows/check/badge.svg)](https://pik.github.com/pik-piam/r2databus/actions) [![codecov](https://codecov.io/gh/pik-piam/r2databus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/r2databus) 
+[![CRAN status](https://www.r-pkg.org/badges/version/r2databus)](https://cran.r-project.org/package=r2databus)  [![R build status](https://github.com/giannou/r2databus/workflows/check/badge.svg)](https://github.com/giannou/r2databus/actions) [![codecov](https://codecov.io/gh/giannou/r2databus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/giannou/r2databus) [![r-universe](https://pik-piam.r-universe.dev/badges/r2databus)](https://pik-piam.r-universe.dev/ui#builds)
 
 ## Purpose and Functionality
 
@@ -33,10 +33,11 @@ update.packages()
 
 ## Tutorial
 
-The package comes with a vignette describing the basic functionality of the package and how to use it. You can load it with the following command (the package needs to be installed):
+The package comes with vignettes describing the basic functionality of the package and how to use it. You can load them with the following command (the package needs to be installed):
 
 ```r
-vignette("databusUpload") # Upload Data to the Energy Databus with R
+vignette("databusDownload") # Download Data from the Energy Databus for use with MADRaT
+vignette("databusUpload")   # Upload Data to the Energy Databus with R
 ```
 
 ## Questions / Problems
@@ -47,7 +48,7 @@ In case of questions / problems please contact Anastasis Giannousakis <giannou@p
 
 To cite package **r2databus** in publications use:
 
-Giannousakis A (2022). _r2databus: An R interface for the DBpedia Databus_. R package version 0.2.0.
+Giannousakis A (2022). _r2databus: An R interface for the DBpedia Databus_. R package version 0.3.0.
 
 A BibTeX entry for LaTeX users is
 
@@ -56,6 +57,6 @@ A BibTeX entry for LaTeX users is
   title = {r2databus: An R interface for the DBpedia Databus},
   author = {Anastasis Giannousakis},
   year = {2022},
-  note = {R package version 0.2.0},
+  note = {R package version 0.3.0},
 }
 ```
